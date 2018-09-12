@@ -39,7 +39,9 @@ public class Main {
 
 // create a dat file scanner
 
-        Scanner datscan = new Scanner(new File("C:\\Files\\Classes\\NP-CSCI3\\HW\\HW1\\src\\com\\sunynp\\assign1-in.dat"));
+        //String path = new File("HW1/src/com/sunynp/assign1-in.dat").getAbsolutePath();
+        //System.out.println(path);
+        Scanner datscan = new Scanner(new File("assign1-in.dat"));
         double[] input = new double[100];
         int i = 0;
 
