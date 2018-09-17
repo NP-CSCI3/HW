@@ -1,3 +1,16 @@
+/**
+ * <h1>HW1 - Postfix</h1>
+ * This program attempts to read a file and perform lines of postfix operations and print their result
+ *  * <p>
+ *
+ * @author  Jim Kravchenko
+ * @version 1.0
+ * @created 2018-09-12
+ *
+ *  WORKING COPY - ASSIGNMENT COMPLETED
+ */
+
+
 package com.sunynp;
 
 import java.io.*;
