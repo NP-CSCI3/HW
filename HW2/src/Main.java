@@ -9,7 +9,6 @@
  *
  * NOT WORKING COPY - ASSIGNMENT IN PROGRESS
  */
-
 import java.util.Stack;
 
 
@@ -18,74 +17,135 @@ public class Main {
     public Main() {
     }
 
-    //
-    public static boolean checkValid(int board[], int row) {
-        System.out.println("CheckValid()");
-        for (int i = 0; i < row; i++) {
-            if (row  == 0) break;
-            System.out.println("Diff: " + Math.abs(board[row] - board[i]) + " = " + (row - i));
-            if (Math.abs(board[row] - board[i]) == row-i) {
+    // Steps
+    //  1. Main
+    //  2. checkValid
+    //  3. displayBoard
 
-                System.out.println("conflict found at row: " + i + "col: " + board[i]);
-                return false;
-            } else if (board[row] == board[i]) {
-                System.out.println("EQUAL conflict found at row: " + i + "col: " + board[i]);
+    //  Functions
+    //  checkValid  -   checks if board position is valid and returns boolean
+    //  printBoard  -   outputs a valid board state
+    //  main        -   runs program
+
+    // static - When a member is declared static, it can be accessed before any objects of its class are created, and without reference to any object.
+
+
+//      checkValid  -   checks if board position is valid and returns boolean
+//          //  when a queen is placed, it must be checked against all previous positions
+//          //  there are two cases that result in a conflict and a return false
+//          //  1. a previous row has the same col value ( col = prevcol )
+//          //  2. a previous row is on a diagonal
+//          //      a diagonal exists when the absolute distance between cols = to the distance of rows
+//          //      (col - prevcol) = (row - prevrow)
+//          //
+//          //  a for loop checks the array at the current row to get its current col
+//          //  the array decrements a row and checks for equality or diagonal and returns boolean
+//          //  this repeats until row = 0, then returns true
+
+    static boolean checkValid(int board[], int row) {
+       // System.out.println("CheckValid()");
+        //   i <- prevrow,  board[i] <- prevcol | row <- currentrow board[row] <- currentcol,
+        for (int i = row - 1; i >= 0; i--) { // check all before current row
+            if ((board[i] == board[row])
+                    || (Math.abs(board[row] - board[i]) == Math.abs(row - i))) {
                 return false;
             }
-            System.out.println("GOOD at row: " + i + "col: " + board[i]);
         }
-
         return true;
+    }
 
+
+    static void printBoard(int board[]) {
+        for (int i = 0; i < board.length; i++) {
+            System.out.print(" " + board[i] + ", ");
+        }
+        System.out.println();
     }
 
 
     public static void main(String[] args) {
-        int filled = 0; // filled positions on stack
-        int n = 4;  // board size
+        //  vars
+        //
+        int row = 0;     // used to iterate through indicies of array
+        int col = 0;     // keeps track of active column position; copied to array board[row]
+        int filled = 0;   // keeps track of stack height for successfully filled rows.
+        int n = 5;       // board size and number of queens
+        int lastIndex = n - 1;
+
+        // declare an array board[] for keeping track of the state of the current board
         int board[] = new int[n];
+
+        // declare a stack boardStack for backtracking through the rows
         Stack boardStack = new Stack();
-        System.out.println("Starting");
-        for (int row = 0; row < n; row++) {
-            System.out.println("Finding a place for row : " + row + "\n");
-            for (int col = 0; col < n; col++) {
-                board[row] = col; // copy this col to the array at index of row
-                System.out.println("Trying col : " + col + " in row: " + row);
-                System.out.println("Checking validity of row : " + row + " col: " + col);
-                if (checkValid(board, row) == false) {
-                    if ((col == (n - 1))) {
-                        // no position found - backtrack
+        for (row = 0; row <= lastIndex; row++) {         //  iterate through the rows
 
-                        col = (int) boardStack.peek();
-                        row-=1;
-                        filled--;
-                        System.out.println("Backtracking to col: " + col + " and row: " + row);
-                        System.out.println("Fill Count: " + filled);
-                        boardStack.pop();
-                        continue;    // backtrack to previous row starting from it's col+1
+            for (col = board[row]; col <= lastIndex; col++) {//  iterate through the cols in row
+
+                board[row] = col;   // add column to array
+
+                if (!checkValid(board, row)) {  //  test if placement is invalid
+                    if (col == lastIndex) {     //  if invalid and col is lastIndex, backtrack
+                        //backtrack
+
+                        while (board[row] == lastIndex) {
+                            if (row == 0) {
+                                System.out.println("No more valid configs");
+                                return;
+                            }
+                            board[row] = 0;
+                            boardStack.pop(); // pop stack
+                            filled--;        // decrease filled
+                            row--;           //  go back to previous row in current for loop
+                        }
+
+                        if (board[row] < lastIndex) {
+                            board[row]++;   // update previous col
+                        }
+
+                        if (board[row] != 0) {
+                            row--;
+                        }
+                        break;          // break out and re-enter inner for loop, updating col to prevcol+1
+                        //  redo last row and start at its col value+1
                     }
-                    continue;   // check next col
-                } else {  // valid Position found
-                    board[row] = col;
-                    System.out.println("valid at row: " + row + " col: " + col);
-                    boardStack.push(col); // row/col position found, push to stack
+                    continue;           //  if placement invalid and col not lastIndex, move on to next col
+
+                } else if (checkValid(board, row)) {  // test if placement is valid.
+
+                    boardStack.push(board[row]);
                     filled++;
-                    System.out.print("row: " + row + " | ");
-                    for (int qspace = 0; qspace < col ; qspace++) {
-                        System.out.print(" * ");
-                    }
-                    System.out.println(" Q ");
-
-
-                    }
                     break;
                 }
             }
+                if (boardStack.size() == n) {            //    break if the size of the stack is the size of the board (no pop)
+                    // break;
+                    printBoard(board);
+                    boardStack.pop();
+                    filled--;
+                    if (col < lastIndex) {
+                        col++;
+                        board[row]=col;
+
+                    }
+                    else {
+                        board[row] = 0;
+                        row--;
+                        //col = board[row]++;
+                        board[row]++;
 
 
+                        boardStack.pop();
+                        filled--;
+                    }
+                    row--;
+                    continue;
 
-        for (int i = 0; i < board.length; i++) {
-            System.out.println("row= " + i + " col= " + board[i]);
+
+            }
         }
+
+     //
+        //   printBoard(board);
     }
 }
+
