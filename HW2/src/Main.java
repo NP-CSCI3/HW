@@ -1,15 +1,16 @@
 /**
  * <h1>HW2 - N-Queens</h1>
  * This program attempts to place n queens on an n x n board
- *  * <p>
  *
  * @author  Jim Kravchenko
  * @version 1.0
  * @created 2018-09-12
+ * @lastedit 2018-09-19 4:37 PM
  *
- * NOT WORKING COPY - ASSIGNMENT IN PROGRESS
+ * WORKING COPY - ASSIGNMENT COMPLETE
  */
 import java.util.Stack;
+import java.util.Scanner;
 
 
 
@@ -17,34 +18,7 @@ public class Main {
     public Main() {
     }
 
-    // Steps
-    //  1. Main
-    //  2. checkValid
-    //  3. displayBoard
-
-    //  Functions
-    //  checkValid  -   checks if board position is valid and returns boolean
-    //  printBoard  -   outputs a valid board state
-    //  main        -   runs program
-
-    // static - When a member is declared static, it can be accessed before any objects of its class are created, and without reference to any object.
-
-
-//      checkValid  -   checks if board position is valid and returns boolean
-//          //  when a queen is placed, it must be checked against all previous positions
-//          //  there are two cases that result in a conflict and a return false
-//          //  1. a previous row has the same col value ( col = prevcol )
-//          //  2. a previous row is on a diagonal
-//          //      a diagonal exists when the absolute distance between cols = to the distance of rows
-//          //      (col - prevcol) = (row - prevrow)
-//          //
-//          //  a for loop checks the array at the current row to get its current col
-//          //  the array decrements a row and checks for equality or diagonal and returns boolean
-//          //  this repeats until row = 0, then returns true
-
-    static boolean checkValid(int board[], int row) {
-       // System.out.println("CheckValid()");
-        //   i <- prevrow,  board[i] <- prevcol | row <- currentrow board[row] <- currentcol,
+      static boolean checkValid(int board[], int row) {
         for (int i = row - 1; i >= 0; i--) { // check all before current row
             if ((board[i] == board[row])
                     || (Math.abs(board[row] - board[i]) == Math.abs(row - i))) {
@@ -54,12 +28,27 @@ public class Main {
         return true;
     }
 
-
     static void printBoard(int board[]) {
+        String space = "|_|";
+        String queen = "|Q|";
+//
         for (int i = 0; i < board.length; i++) {
-            System.out.print(" " + board[i] + ", ");
+            String preQueen = "";
+            String postQueen = "";
+            System.out.print(i+": ");
+            for (int j = 0; j < board[i]; j++) {
+                preQueen += space;
+            }
+            for (int j = 0; j < (board.length - board[i])-1; j++) {
+                postQueen += space;
+            }
+            System.out.println(preQueen + queen + postQueen);
         }
+
         System.out.println();
+        System.out.println("Press \"ENTER\" to continue...");
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
     }
 
 
@@ -69,7 +58,12 @@ public class Main {
         int row = 0;     // used to iterate through indicies of array
         int col = 0;     // keeps track of active column position; copied to array board[row]
         int filled = 0;   // keeps track of stack height for successfully filled rows.
-        int n = 5;       // board size and number of queens
+        int n=0;       // board size and number of queens
+
+        int count = 0;  //  board combination count
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter Desired Board Size: ");
+        n = scanner.nextInt();
         int lastIndex = n - 1;
 
         // declare an array board[] for keeping track of the state of the current board
@@ -90,6 +84,8 @@ public class Main {
                         while (board[row] == lastIndex) {
                             if (row == 0) {
                                 System.out.println("No more valid configs");
+                                System.out.println("Total Valid Combinations: " + count);
+                                count=0;
                                 return;
                             }
                             board[row] = 0;
@@ -119,6 +115,7 @@ public class Main {
             }
                 if (boardStack.size() == n) {            //    break if the size of the stack is the size of the board (no pop)
                     // break;
+                    count++;
                     printBoard(board);
                     boardStack.pop();
                     filled--;
@@ -143,9 +140,6 @@ public class Main {
 
             }
         }
-
-     //
-        //   printBoard(board);
     }
 }
 
